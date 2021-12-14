@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import filters
 
 #from django_elasticsearch_dsl_drf.filter_backends import SearchFilterBackend
 #from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
@@ -34,10 +35,12 @@ import random
     #filter_backends = [SearchFilterBackend]
     #search_fields = [
         #'title',
-        #'image'
+
     #]
     #filter_fields= {
         #'title' : 'title',
+        #'image' : 'image',
+
     #}
 
 
@@ -51,6 +54,24 @@ class ProductViewSet(viewsets.ViewSet):
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
+
+    def search(self, request):
+
+        queryset = Product.objects.all()
+        #print(queryset)
+
+        title = self.request.query_params.get('title')
+        #print(title)
+
+        queryset = queryset.filter(title=title)
+        #print(queryset)
+
+        serializer = ProductSerializer(queryset, many=True)
+
+        return  Response(serializer.data)
+
+
+
     def create(self, request):
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -58,10 +79,12 @@ class ProductViewSet(viewsets.ViewSet):
         publish('product_created', serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
+
+    #def retrieve(self, request, pk=None):
+        #product = Product.objects.get(title=pk)
+        #serializer = ProductSerializer(product)
+        #return Response(serializer.data)
+
 
     def update(self, request, pk=None):
         product = Product.objects.get(id=pk)
