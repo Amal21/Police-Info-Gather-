@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'products',
+    'recherches',
     # Django Elasticsearch integration
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',

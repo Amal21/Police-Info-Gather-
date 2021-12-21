@@ -15,43 +15,43 @@ db = SQLAlchemy(app)
 
 
 @dataclass
-class Product(db.Model):
+class Recherche(db.Model):
     id: int
-    title: str
-    image: str
+    cin: str
+    description: str
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    title = db.Column(db.String(200))
-    image = db.Column(db.String(200))
+    cin = db.Column(db.String(200))
+    description = db.Column(db.String(200))
 
 
 @dataclass
-class ProductUser(db.Model):
+class RechercheUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
-    product_id = db.Column(db.Integer)
+    recherche_id = db.Column(db.Integer)
 
-    UniqueConstraint('user_id', 'product_id', name='user_product_unique')
+    UniqueConstraint('user_id', 'recherche_id', name='user_ recherche_unique')
 
 
-@app.route('/api/products')
+@app.route('/api/recherches')
 def index():
-    return jsonify(Product.query.all())
+    return jsonify(Recherche.query.all())
 
 
-@app.route('/api/products/<int:id>/like', methods=['POST'])
+@app.route('/api/recherches/<int:id>/like', methods=['POST'])
 def like(id):
     req = requests.get('http://docker.for.mac.localhost:8000/api/user')
     #json = req.json()
 
     try:
-        productUser = ProductUser(user_id=id, product_id=id)
-        db.session.add(productUser)
+        rechercheUser = RechercheUser(user_id=id, product_id=id)
+        db.session.add(rechercheUser)
         db.session.commit()
 
-        publish('product_liked', id)
+        publish('recherche_liked', id)
     except:
-        abort(400, 'You already liked this product')
+        abort(400, 'You already liked ')
 
     return jsonify({'message':'success'})
 

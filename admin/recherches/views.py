@@ -16,15 +16,15 @@ from django_elasticsearch_dsl_drf.filter_backends import (
 
 
 
-from .models import Product, User
-from .serializers import ProductSerializer#ProductDocumentSerializer
+from .models import Recherche, User
+from .serializers import RechercheSerializer#ProductDocumentSerializer
 #from .documents import ProductDocument
 
 
 
 
 from .producer import publish
-from .serializers import ProductSerializer
+from .serializers import RechercheSerializer
 import random
 
 #class ProductSearchWithESViewSet(DocumentViewSet):
@@ -45,36 +45,55 @@ import random
 
 
 
-class ProductViewSet(viewsets.ViewSet):
+class RechercheViewSet(viewsets.ViewSet):
+
     def list(self, request):
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
+        recherches = Recherche.objects.all()
+        serializer = RechercheSerializer(recherches, many=True)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = ProductSerializer(data=request.data)
+        serializer = RechercheSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        publish('product_created', serializer.data)
+        publish('recherche_created', serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+
+    def search(self, request):
+
+        queryset = Recherche.objects.all()
+        #print(queryset)
+
+        cin = self.request.query_params.get('cin')
+        #print(title)
+
+        queryset = queryset.filter(cin=cin)
+        #print(queryset)
+
+        serializer = RechercheSerializer(queryset, many=True)
+
+        return  Response(serializer.data)
+        
+
     def retrieve(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        serializer = ProductSerializer(product)
+        recherche = Recherche.objects.get(id=pk)
+        serializer = RechercheSerializer(recherche)
         return Response(serializer.data)
 
     def update(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        serializer = ProductSerializer(instance=product, data=request.data)
+        recherche = Recherche.objects.get(id=pk)
+        serializer = RechercheSerializer(instance=recherche, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        publish('product_updated', serializer.data)
+        publish('recherche_updated', serializer.data)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def destroy(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        product.delete()
-        publish('product_deleted', pk)
+        recherche = Recherche.objects.get(id=pk)
+        recherche.delete()
+        publish('recherche_deleted', pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

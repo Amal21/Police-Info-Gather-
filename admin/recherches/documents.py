@@ -4,21 +4,21 @@ from django_elasticsearch_dsl import (
 
 )
 from django_elasticsearch_dsl.registries import registry
-from .models import Product
+from .models import Recherche
 
 @registry.register_document
 #@PUBLISHER_INDEX.doc_type
-class ProductDocument(Document):
+class RechercheDocument(Document):
 
     class Index:
-        name = 'products'
+        name = 'recherches'
         settings={'number_of_shards': 1, 'number_of_replicas': 0}
 
     class Django:
 
-        model= Product
+        model= Recherche
         fields ={
-            'title',
-            'image',
+            'cin',
+            'description',
         }
 

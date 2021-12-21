@@ -3,7 +3,7 @@ import pika, json, os, django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "admin.settings")
 django.setup()
 
-from products.models import Product
+from recherches.models import Recherche
 
 params = pika.URLParameters('amqps://dumytatf:swqlCqfIC71HaotdI8N9m8fSzbR0Qy2Z@toad.rmq.cloudamqp.com/dumytatf')
 
@@ -18,10 +18,10 @@ def callback(ch, method, properties, body):
     print('Received in admin')
     id = json.loads(body)
     print(id)
-    product = Product.objects.get(id=id)
-    product.likes = product.likes + 1
-    product.save()
-    print('Product likes increased!')
+    recherche = Recherche.objects.get(id=id)
+    #product.likes = product.likes + 1
+    recherche.save()
+    print('recherche likes increased!')
 
 
 channel.basic_consume(queue='admin', on_message_callback=callback, auto_ack=True)

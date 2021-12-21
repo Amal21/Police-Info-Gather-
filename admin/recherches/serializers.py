@@ -1,11 +1,11 @@
 #from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from rest_framework import serializers
-from .models import Product
-#from .documents import ProductDocument
+from .models import Recherche
 
-class ProductSerializer(serializers.ModelSerializer):
+
+class RechercheSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = Recherche
         fields = '__all__'
 
 #class ProductDocumentSerializer(DocumentSerializer):
